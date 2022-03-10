@@ -30,6 +30,7 @@ export default function Signup({callbackOnboardingStack}) {
     const [lastName, onChangeLastName] = useState("");
     const [email, onChangeEmail] = useState("");
     const [password, onChangePassword] = useState("");
+    const [passwordValidator, checkPassword] = useState(true);
 
     let [fontsLoaded] = useFonts({
       Rubik_300Light,
@@ -58,11 +59,12 @@ export default function Signup({callbackOnboardingStack}) {
         toggle(true);
     }
 
+    if (!passwordValidator && password.length > 5 ) {
+        checkPassword(true);
+    }
+
     const registerUser = async () => {
       const auth = getAuth();
-
-      console.log('auth', auth)
-
       if (email.length === 0 || password.length === 0) {
         return;
       }
@@ -76,11 +78,9 @@ export default function Signup({callbackOnboardingStack}) {
           email: email,
           password: password
         });
-
         callbackOnboardingStack();
-
       } catch (err) {
-        console.log(err);
+        checkPassword(false);
       }
     }
 
@@ -107,16 +107,21 @@ export default function Signup({callbackOnboardingStack}) {
             }
     ];
 
-    // <Back width={30} height={30} fill={'#FFFFFF'}/>
+    let validator = null;
+
+    if (!passwordValidator) {
+        validator = (<Text style={{color: 'orange'}}> Password must be greater than 5 characters </Text>);
+    }
+
     let contentDisplayed = null;
 
     if (!readDescription) {
-        contentDisplayed = (<Onboarding backgroundImage={require('../../assets/icon.png')} pages={pages} />)
+        contentDisplayed = (<Onboarding backgroundImage={require('../../assets/onboarding-gradient-vertical.png')} pages={pages} />)
     } else {
         contentDisplayed = (
             <View style={styles.container}>
                 <View style={{flex: .1, flexDirection: 'row', width: '100%'}}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Signin')} style={{marginLeft: 10, paddingBottom: 7, flex: .2, height: '100%', justifyContent: 'flex-end'}}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Signin')} style={{marginLeft: 15, paddingBottom: 7, flex: .2, height: '100%', justifyContent: 'flex-end'}}>
                         <Back width={30} height={30} fill={'black'}/>
                     </TouchableOpacity>
                     <View style={{flex: .8, flexDirection: 'row', alignItems: 'flex-end'}}>
@@ -125,12 +130,12 @@ export default function Signup({callbackOnboardingStack}) {
                     </View>
                 </View>
 
-                <View style={{flex:.1, width: '100%', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: .1, width: '100%', justifyContent: 'center', alignItems: 'center'}}>
                     <Text style={{fontSize: 22, fontFamily: 'Rubik_700Bold', color: '#7044A9'}}> Feel, Share, Connect </Text>
 
                 </View>
 
-                <View style={{flex: .8, width: '100%', justifyContent: 'space-evenly', alignItems: 'center'}}>
+                <View style={{flex: .5, width: '100%', justifyContent: 'space-evenly', alignItems: 'center'}}>
                     <TextInput
                         style={styles.input}
                         autoCapitalize='none'
@@ -154,17 +159,22 @@ export default function Signup({callbackOnboardingStack}) {
                      placeholderTextColor='white'
                      value={email}
                      onChangeText={onChangeEmail}
-                  />
-                  <TextInput
-                    style={styles.input}
-                    autoCapitalize='none'
-                    placeholder='Password'
-                    placeholderTextColor='white'
-                    value={password}
-                    onChangeText={onChangePassword}
-                 />
+                   />
+                    <TextInput
+                        style={passwordValidator ? styles.input : styles.inputError}
+                        autoCapitalize='none'
+                        placeholder='Password'
+                        placeholderTextColor='white'
+                        value={password}
+                        onChangeText={onChangePassword}
+                     />
 
-                 <Button color='#e9497e' title='Create account' onPress={registerUser}/>
+                     {passwordValidator ? null : validator}
+
+                </View>
+
+                <View style={{flex: .3, alignItems: 'center'}} >
+                    <Button color='#e9497e' title='Create account' onPress={registerUser}/>
 
                 </View>
             </View>
@@ -191,4 +201,27 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     paddingLeft: 15,
   },
+  input: {
+    width: '80%',
+    height: 55,
+    backgroundColor: '#3B8EA5',
+    color: 'white',
+    borderRadius: 14,
+    fontSize: 18,
+    fontWeight: '500',
+    paddingLeft: 15,
+  },
+  inputError: {
+    width: '80%',
+    height: 55,
+    backgroundColor: '#3B8EA5',
+    color: 'white',
+    borderRadius: 14,
+    fontSize: 18,
+    fontWeight: '500',
+    paddingLeft: 15,
+    borderWidth: 2,
+    borderColor: 'orange',
+  },
+
 });
