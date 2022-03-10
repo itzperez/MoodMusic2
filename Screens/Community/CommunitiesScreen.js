@@ -299,7 +299,7 @@ export default function CommunitiesScreen() {
               backgroundColor: item.color,
               borderRadius: 15,
               marginBottom: 15,
-              marginHorizontal: 20,
+              marginHorizontal: 25,
               marginTop: 5,
           }} onPress={() => nextScreen(item)}>
 
@@ -339,10 +339,10 @@ export default function CommunitiesScreen() {
 
             </View>
 
-            <View style={{flex: .55, width: '100%'}}>
+            <View style={{flex: .55}}>
                   <FlatList
                     numColumns={2}
-                    showsVerticalScrollIndicator={true}
+                    showsVerticalScrollIndicator={false}
                     data={findCommunities}
                     renderItem={renderCommunities}
                   />
